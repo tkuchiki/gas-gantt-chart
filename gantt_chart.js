@@ -30,7 +30,16 @@ function onOpen() {
   {
     name : "休日列を塗りつぶす",
     functionName : "setHolidayBGColor"
-  }];
+  },
+  {
+    name : "休日列を非表示にする",
+    functionName : "hideHolidayColumn"
+  },
+  {
+    name : "休日列を表示する",
+    functionName : "showHolidayColumn"
+  }
+  ];
   sheet.addMenu("関数", entries);
 };
 
@@ -43,8 +52,30 @@ function setHolidayBGColor() {
   var lastColumn = sheet.getLastColumn();
   
   for (i = startDateColumn; i <= lastColumn; i++) {
-    if (sheet.getRange(dayRow, i).getValue().search(/(土|日|祝|休)/) != -1) {
+    if (checkHoliday(sheet.getRange(dayRow, i).getValue())) {
       sheet.getRange(startChartRow, i, sheet.getLastRow() - dayRow).setBackgroundColor(getColorCode('gray'));
+    }
+  }
+}
+
+function hideHolidayColumn() {
+  var sheet      = getActiveSheet();
+  var lastColumn = sheet.getLastColumn();
+  
+  for (i = startDateColumn; i <= lastColumn; i++) {
+    if (checkHoliday(sheet.getRange(dayRow, i).getValue())) {
+      sheet.hideColumns(i);
+    }
+  }
+}
+
+function showHolidayColumn() {
+  var sheet      = getActiveSheet();
+  var lastColumn = sheet.getLastColumn();
+  
+  for (i = startDateColumn; i <= lastColumn; i++) {
+    if (checkHoliday(sheet.getRange(dayRow, i).getValue())) {
+      sheet.showColumns(i);
     }
   }
 }
@@ -104,4 +135,8 @@ function checkLeapYear(year) {
 
 function slashSeparatedDate(year, month, day) {
   return year + "/" + ("0" + month).slice(-2) + "/" + ("0" + day).slice(-2);
+}
+
+function checkHoliday(str) {
+  return str.search(/(土|日|祝|休|振)/) != -1;
 }
