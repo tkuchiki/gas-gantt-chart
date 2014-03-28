@@ -54,7 +54,10 @@ function setDate() {
   var dates     = yearMonth.split('/');
   
   if (dates.length == 1) {
-    Browser.msgBox(dates[0]  + " : データが不正な形式です。YYYY/MM の形式で入力してください。");
+    if (dates[0] != "cancel") {
+      Browser.msgBox(dates[0]  + " : データが不正な形式です。YYYY/MM の形式で入力してください。");
+    }
+    
     return;
   }
   
@@ -72,8 +75,8 @@ function setDate() {
   var sheet = getActiveSheet();
   
   for (i = 1; i <= lastDate; i++) {
-    sheet.getRange(dateRow, i + startDateColumn - 1).setValue(i);
-    var date   = new Date(year, month - 1, i);
+    sheet.getRange(dateRow, i + startDateColumn - 1).setValue(slashSeparatedDate(year, month, i));
+    var date   = new Date(year, parseInt(month - 1, 10), i);
     var dayNum = date.getDay();
 
     var color = "black";
@@ -97,4 +100,8 @@ function getColorCode(name) {
 
 function checkLeapYear(year) {
   return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+}
+
+function slashSeparatedDate(year, month, day) {
+  return year + "/" + ("0" + month).slice(-2) + "/" + ("0" + day).slice(-2);
 }
